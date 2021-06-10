@@ -52,7 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			<div class="form-group">
 				<label class="col-md-3">Blog Image:</label>
 				<div class="col-md-9">
-					<input type="file" accept="image/*" name="form-control required" name="image" id="image" value="<?php echo $image; ?>">
+					<input type="file" accept="image/*" class="form-control required" name="image" id="image" value="<?php echo $image; ?>">
 					<img id="img_preview" src="<?php echo base_url('upload/').$image ?>" alt="<?php echo $image; ?>" width="100px" height="100px;">
 				</div>
 			</div>

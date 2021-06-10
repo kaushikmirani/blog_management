@@ -96,21 +96,37 @@ class Blogs extends CI_Controller {
 			'added_on' => date('Y-m-d H:i:s'),
 		);
 
+		$config['upload_path'] = './upload/';
+		$config['allowed_types'] = 'gif|jpg|png';
+
+		$this->load->library('upload',$config);
+		if(isset($_FILES['image'])){
+			if(file_exists($_FILES['image']['tmp_name']) || is_uploaded_file($_FILES['image']['tmp_name'])){
+
+				if(!$this->upload->do_upload('image')){
+					$this->session->set_flashdata('error_msg',$this->upload->display_errors());
+				}else{
+					$image_data = array('image_metadata'=>$this->upload->data());
+					$blog_array['image'] = $image_data['image_metadata']['file_name'];
+				}
+			}
+		}
+
+
 		$affected_id=$this->blog_model->submit_blog($blog_array,$blog_id);
 
-		if($email_check){
-			$this->user_model->register_user($user);
-			$this->session->set_flashdata('success_msg', 'Registered successfully.Now login to your account.');
+		if($affected_id['affected_id']>0){
+			$this->session->set_flashdata('success_msg', 'Blog updated successfully.');
 			//redirect('user/user_login');
 			$response['status'] = true;
-			$redirect_url = base_url('user/user_login');
+			$redirect_url = base_url();
 			$response['redirect_url'] = $redirect_url;
 		}
 		else{
 			$this->session->set_flashdata('error_msg', 'Error occured,Try again.');
 			//redirect('user');
 			$response['status'] = false;
-			$redirect_url = base_url('user/user_signup');
+			$redirect_url = base_url();
 			$response['redirect_url'] = $redirect_url;
 		}
 		echo json_encode($response);exit;

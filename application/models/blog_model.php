@@ -5,7 +5,7 @@ class Blog_model extends CI_Model {
 
 	public function blog_list()
 	{
-		$sql = "SELECT id,blog_title,blog_description,image,user_id FROM tbl_blogs";
+		$sql = "SELECT id,blog_title,blog_description,image,user_id FROM tbl_blogs ORDER BY id DESC";
 
 		$blog_list_data = $this->db->query($sql)->result_array();
 
@@ -42,8 +42,8 @@ class Blog_model extends CI_Model {
 
 	}
 
-	public function register_user($blog_array=array(),$blog_id=0){
-
+	public function submit_blog($blog_array=array(),$blog_id=0){
+		$response = array();
 		if($blog_id>0){
 			$sql = "SELECT user_id FROM tbl_blogs WHERE id=?";
 
@@ -54,12 +54,13 @@ class Blog_model extends CI_Model {
 
 				$this->db->update('tbl_blogs',$blog_array,array('id'=>$blog_id));
 				$response['affected_id'] = $this->db->affected_rows();
-			}else{
-				$blog_array['user_id'] = $this->session->userdata("id");
-				$this->db->insert('tbl_blogs', $blog_array);
-				$response['affected_id'] = $this->db->insert_id();
 			}
+		}else{
+			$blog_array['user_id'] = $this->session->userdata("id");
+			$this->db->insert('tbl_blogs', $blog_array);
+			$response['affected_id'] = $this->db->insert_id();
 		}
+		return $response;
 
 	}
 }
